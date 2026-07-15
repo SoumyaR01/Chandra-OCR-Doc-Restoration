@@ -1,0 +1,157 @@
+# ============================================================
+# Document Restoration Pipeline — Configuration
+# ============================================================
+# All parameters are tunable. The pipeline reads this file
+# at startup via --config flag.
+# ============================================================
+
+# --- Paths ---
+paths:
+  input_dir: "/home/pinku/Document Restoration/Low_quality_samples"
+  output_dir: "/home/pinku/Document Restoration/Restored_output"
+  log_dir: "/home/pinku/Document Restoration/logs"
+  comparison_dir: "/home/pinku/Document Restoration/Restored_output/comparisons"
+
+# --- General ---
+general:
+  output_format: "png"       # png | tiff | jpg
+  output_dpi: 300
+  use_gpu: true              # Falls back to CPU if CUDA unavailable
+  max_workers: 1             # Parallel batch processing (1 = sequential)
+  log_level: "INFO"          # DEBUG | INFO | WARNING | ERROR
+
+# --- Stage 1: Preprocessing ---
+preprocessing:
+  enabled: true
+  bilateral_filter:
+    diameter: 5              # Smaller diameter preserves thin strokes better
+    sigma_color: 30           # Gentler color sigma to avoid smearing fine text
+    sigma_space: 30           # Gentler spatial sigma
+  non_local_means:
+    enabled: false           # Enable for heavily damaged images
+    h: 10                    # Filter strength
+    template_window: 7
+    search_window: 21
+
+# --- Stage 2: Illumination Correction ---
+illumination:
+  enabled: true
+  morph_kernel_size: 51      # Morphological closing kernel (must be odd, large)
+  clahe:
+    enabled: true
+    clip_limit: 2.0
+    tile_grid_size: 8        # Grid size for CLAHE tiles
+    blend_low: 180           # Pixels above this start fading out CLAHE
+    blend_high: 230          # Pixels above this use zero CLAHE (pure background)
+
+# --- Stage 3: Stain & Bleed-Through Removal ---
+stain_removal:
+  enabled: true
+  text_protect_threshold: 120  # Pixels darker than this are protected as text
+  # HSV thresholds for blue stain detection
+  blue_stain:
+    h_low: 90
+    h_high: 130
+    s_low: 30
+    s_high: 255
+    v_low: 50
+    v_high: 255
+  # HSV thresholds for yellow/brown stain detection
+  yellow_stain:
+    h_low: 15
+    h_high: 40
+    s_low: 30
+    s_high: 255
+    v_low: 100
+    v_high: 255
+  inpaint_radius: 3          # Radius for cv2.inpaint (smaller = more precise)
+  bleed_through:
+    enabled: true
+    intensity_threshold: 210  # Suppress pixels lighter than this (was 220)
+    min_contrast: 20          # Low-contrast threshold (was 15)
+
+# --- Stage 4: Deblur ---
+deblur:
+  enabled: true
+  blur_threshold: 100.0      # Laplacian variance below this = blurry
+  wiener:
+    noise_variance: 0.01
+    kernel_size: 5
+  unsharp_mask:
+    enabled: true
+    sigma: 1.0
+    strength: 0.3            # Edge-guided strength (gentler, applied only at edges)
+    threshold: 0
+
+# --- Stage 5: Super-Resolution ---
+super_resolution:
+  enabled: true
+  model_name: "RealESRGAN_x2plus"
+  scale: 2
+  min_resolution: 1500       # Only upscale if max dimension < this
+  tile_size: 512
+  tile_pad: 10
+
+# --- Stage 6: Binarization (edge-guided Sauvola with local contrast gating) ---
+binarization:
+  enabled: true
+  method: "sauvola"           # sauvola | otsu | adaptive
+  sauvola:
+    window_size: 25           # Must be odd
+    k: 0.08                   # Conservative k-factor to preserve faint text
+    r: 128
+    min_contrast: 20          # Local contrast below this = force background (kills ghost text)
+    edge_alpha: 0.15          # Edge guidance strength (higher = more aggressive near edges)
+  adaptive:
+    block_size: 31
+    c: 10
+  invert_output: false
+
+# --- Stage 7: Text Restoration (CC analysis + spatial density filter) ---
+text_restoration:
+  enabled: true
+  morph_close_kernel: 2
+  morph_iterations: 1
+  connected_component:
+    min_area: 3               # Very small to keep punctuation marks
+    max_area_ratio: 0.3
+  spatial_filter:
+    enabled: true
+    min_large_area: 12        # Components >= this are considered "text"
+    max_distance: 70.0        # Small components farther than this from text are removed
+
+# --- Stage 8: Post-Processing ---
+postprocessing:
+  enabled: true
+  morphological_clean:
+    enabled: true
+    kernel_size: 2
+  border_clean:
+    enabled: true
+    margin: 50                # Flood-fill margin in pixels from each edge
+  median_filter:
+    enabled: true
+    kernel_size: 3
+  deskew:
+    enabled: true
+    max_angle: 5.0
+  autocrop:
+    enabled: true
+    border_margin: 20
+
+# --- OCR Verification (Chandra OCR ONLY - Tesseract DISABLED) ---
+ocr:
+  enabled: true                # ENABLED for full OCR extraction
+  engine: "chandra"           # ONLY Chandra OCR enabled (tesseract DISABLED)
+  method: "hf"                # hf = HuggingFace transformers (works on Windows), vllm = vLLM server (Linux only)
+  model_checkpoint: "datalab-to/chandra-ocr-2"
+  vllm_api_base: "http://localhost:8000/v1"
+  vllm_api_key: "EMPTY"
+  vllm_model_name: "chandra"
+  save_txt: true              # Save OCR text output next to restored image
+  save_format: "markdown"     # markdown | html | raw
+  use_mock_fallback: true     # ENABLED - write Markdown OCR output even when Chandra cannot initialize
+  # Tesseract DISABLED - no fallback
+  # lang: "eng"               # DISABLED
+  # config: "--psm 6"         # DISABLED
+

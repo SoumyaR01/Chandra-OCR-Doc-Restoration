@@ -1,0 +1,33 @@
+[2026-07-15 05:32:49,815] INFO     Log file: /home/pinku/Document Restoration/logs/restore_20260715_053249.log
+[2026-07-15 05:32:53,268] INFO     CUDA not available -- using CPU
+[2026-07-15 05:32:53,269] INFO     Initializing Chandra OCR Engine (method: hf)...
+[2026-07-15 05:33:00,995] ERROR    Failed to initialize Chandra OCR Engine: unable to mmap 10591220088 bytes from file </home/pinku/.cache/huggingface/hub/models--datalab-to--chandra-ocr-2/snapshots/af93b47dba1b47b6640c86ccf487ed2260ab9a09/model.safetensors>: Cannot allocate memory (12)
+[2026-07-15 05:33:00,996] WARNING  OCR engine initialization failed and mock fallback is disabled. OCR will be skipped.
+[2026-07-15 05:33:00,997] INFO     ============================================================
+[2026-07-15 05:33:00,998] INFO     Document Restoration & Chandra OCR Pipeline
+[2026-07-15 05:33:00,998] INFO     Input:  Low_quality_samples/40 (50).png
+[2026-07-15 05:33:00,998] INFO     Output: /home/pinku/Document Restoration/Restored_output
+[2026-07-15 05:33:00,998] INFO     Device: cpu
+[2026-07-15 05:33:00,998] INFO     Target: Single file (Low_quality_samples/40 (50).png)
+[2026-07-15 05:33:00,998] INFO     ============================================================
+[2026-07-15 05:33:00,998] INFO     
+[Image 1/1] --------------------------------------------------
+[2026-07-15 05:33:00,998] INFO     Processing: 40 (50).png
+[2026-07-15 05:33:01,924] INFO       Input: 7084x9750 (305 KB)
+[2026-07-15 05:33:01,925] INFO       [Stage 1] Preprocessing -- bilateral denoise
+[2026-07-15 05:33:02,030] INFO       [Stage 2] Illumination correction -- morph background + CLAHE
+[2026-07-15 05:33:04,148] INFO       [Stage 3] Stain & bleed-through removal
+[2026-07-15 05:33:05,644] INFO       [Stage 4] Deblur -- Laplacian variance: 921.7 (threshold: 100.0)
+[2026-07-15 05:33:10,322] INFO       [Stage 5] Super-resolution -- SKIPPED (image 9750px >= 1500px threshold)
+[2026-07-15 05:33:10,332] INFO       [Stage 6] Binarization -- sauvola
+[2026-07-15 05:33:43,158] INFO       [Stage 7] Text restoration -- morph close + CC filter
+[2026-07-15 05:37:03,578] INFO       [Stage 8] Post-processing -- median, deskew, crop
+[2026-07-15 05:37:06,746] INFO       Saved: /home/pinku/Document Restoration/Restored_output/40 (50)_restored.png
+[2026-07-15 05:37:07,204] INFO         Comparison saved: /home/pinku/Document Restoration/Restored_output/comparisons/40 (50)_comparison.png
+[2026-07-15 05:37:07,206] INFO       Completed in 246.2s -- output: 6818x9403
+[2026-07-15 05:37:07,251] INFO     
+============================================================
+[2026-07-15 05:37:07,252] INFO     Batch complete: 1 succeeded, 0 failed
+[2026-07-15 05:37:07,252] INFO     Total time: 246.3s
+[2026-07-15 05:37:07,252] INFO     Outputs saved to: /home/pinku/Document Restoration/Restored_output
+[2026-07-15 05:37:07,252] INFO     ============================================================

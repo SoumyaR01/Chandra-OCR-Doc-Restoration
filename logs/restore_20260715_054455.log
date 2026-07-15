@@ -1,0 +1,36 @@
+[2026-07-15 05:44:55,027] INFO     Log file: /home/pinku/Document Restoration/logs/restore_20260715_054455.log
+[2026-07-15 05:44:57,660] INFO     CUDA not available -- using CPU
+[2026-07-15 05:44:57,660] INFO     Initializing Chandra OCR Engine (method: hf)...
+[2026-07-15 05:45:04,806] ERROR    Failed to initialize Chandra OCR Engine: unable to mmap 10591220088 bytes from file </home/pinku/.cache/huggingface/hub/models--datalab-to--chandra-ocr-2/snapshots/af93b47dba1b47b6640c86ccf487ed2260ab9a09/model.safetensors>: Cannot allocate memory (12)
+[2026-07-15 05:45:04,806] WARNING  Will fall back to OCR output generation since use_mock_fallback is enabled.
+[2026-07-15 05:45:04,808] INFO     ============================================================
+[2026-07-15 05:45:04,808] INFO     Document Restoration & Chandra OCR Pipeline
+[2026-07-15 05:45:04,808] INFO     Input:  Low_quality_samples/40 (50).png
+[2026-07-15 05:45:04,809] INFO     Output: /home/pinku/Document Restoration/Restored_output
+[2026-07-15 05:45:04,809] INFO     Device: cpu
+[2026-07-15 05:45:04,809] INFO     Target: Single file (Low_quality_samples/40 (50).png)
+[2026-07-15 05:45:04,809] INFO     ============================================================
+[2026-07-15 05:45:04,809] INFO     
+[Image 1/1] --------------------------------------------------
+[2026-07-15 05:45:04,809] INFO     Processing: 40 (50).png
+[2026-07-15 05:45:05,757] INFO       Input: 7084x9750 (305 KB)
+[2026-07-15 05:45:05,757] INFO       [Stage 1] Preprocessing -- bilateral denoise
+[2026-07-15 05:45:05,864] INFO       [Stage 2] Illumination correction -- morph background + CLAHE
+[2026-07-15 05:45:07,983] INFO       [Stage 3] Stain & bleed-through removal
+[2026-07-15 05:45:09,696] INFO       [Stage 4] Deblur -- Laplacian variance: 921.7 (threshold: 100.0)
+[2026-07-15 05:45:13,357] INFO       [Stage 5] Super-resolution -- SKIPPED (image 9750px >= 1500px threshold)
+[2026-07-15 05:45:13,359] INFO       [Stage 6] Binarization -- sauvola
+[2026-07-15 05:45:26,709] INFO       [Stage 7] Text restoration -- morph close + CC filter
+[2026-07-15 05:48:35,144] INFO       [Stage 8] Post-processing -- median, deskew, crop
+[2026-07-15 05:48:37,065] INFO       [Stage 9] Chandra OCR Verification on: 40 (50).png
+[2026-07-15 05:48:37,713] INFO         Chandra OCR (FALLBACK) completed in 0.6s
+[2026-07-15 05:48:38,697] INFO       Saved: /home/pinku/Document Restoration/Restored_output/40 (50)_restored.png
+[2026-07-15 05:48:38,700] INFO       Saved OCR text output: /home/pinku/Document Restoration/Restored_output/40 (50).md
+[2026-07-15 05:48:39,077] INFO         Comparison saved: /home/pinku/Document Restoration/Restored_output/comparisons/40 (50)_comparison.png
+[2026-07-15 05:48:39,077] INFO       Completed in 214.3s -- output: 6818x9403
+[2026-07-15 05:48:39,126] INFO     
+============================================================
+[2026-07-15 05:48:39,127] INFO     Batch complete: 1 succeeded, 0 failed
+[2026-07-15 05:48:39,127] INFO     Total time: 214.3s
+[2026-07-15 05:48:39,127] INFO     Outputs saved to: /home/pinku/Document Restoration/Restored_output
+[2026-07-15 05:48:39,127] INFO     ============================================================
